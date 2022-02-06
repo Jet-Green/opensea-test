@@ -1,0 +1,7 @@
+mutation resetTodos {
+  resetTodos {
+    id
+    text
+    completedAt
+  }
+}

@@ -1,19 +1,11 @@
-# opensea_test
+# vue-apollo-done
 
-## Project setup
-```
-npm install
-```
+This demo is done as a part of JavaScript.ninja project
 
-### Compiles and hot-reloads for development
+### Run demo
+
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Not intended for being used in production

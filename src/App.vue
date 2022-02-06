@@ -1,32 +1,80 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+  <div>
+    <ApolloMutation
+      tag="h1"
+      :mutation="$options.queries.resetTodosQuery"
+      v-slot="{ mutate }"
+      @done="notify('reset')"
+    >
+      <button @click="mutate()">Reset</button>
+    </ApolloMutation>
+    <ApolloQuery tag="ul" :query="$options.queries.todosQuery" v-slot="{ result: { data } }">
+      <template v-if="data">
+        <li v-for="todo in data.todos" :key="todo.id" :class="{completed: todo.completedAt}">
+          <p>{{ todo.text }}</p>
+          <ApolloMutation
+            :mutation="$options.queries.completeTodoQuery"
+            :variables="{ id: todo.id }"
+            v-slot="{ mutate }"
+            @done="notify('complete', todo.id)"
+          >
+            <button v-if="!todo.completedAt" @click="mutate()">Mark as complete</button>
+          </ApolloMutation>
+        </li>
+      </template>
+    </ApolloQuery>
   </div>
 </template>
 
+<script>
+import todosQuery from "./graphql/todos.gql";
+import completeTodoQuery from "./graphql/completeTodo.gql";
+import resetTodosQuery from "./graphql/resetTodos.gql";
+import { ApolloMutation, ApolloQuery } from "vue-apollo";
+
+export default {
+  components: {
+    ApolloQuery,
+    ApolloMutation
+  },
+  queries: {
+    todosQuery,
+    completeTodoQuery,
+    resetTodosQuery
+  },
+  methods: {
+    notify(...args) {
+      window.console.log("notify:", ...args);
+    }
+  }
+};
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+ul {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
-#nav {
-  padding: 30px;
+li {
+  display: block;
+  margin: 5px;
+  flex-shrink: 0;
+  width: 200px;
+  position: relative;
+  border: solid black 1px;
+  padding: 0 30px 30px 30px;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+li button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+li.completed {
+  background-color: #f0ffff;
 }
 </style>
